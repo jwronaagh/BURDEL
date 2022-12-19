@@ -1,25 +1,28 @@
 #include <SFML/Graphics.hpp> // biblioteka graficzna
 #include <time.h> 
 
-/* Co dodaæ?
-* naprawiæ by dzia³a³o
+/* Co dodaÄ‡?
+* naprawiÄ‡ by dziaÅ‚aÅ‚o
 * licznik czasu
 * przycisk resetu
 * fajny komunikat o przegranej
 * menu?
-* 
-
-
+*
 */
 
 
 using namespace std;
-using namespace sf; // przedrostek na pocz¹tky by nie dodawaæ go do ka¿dej funkjci SFML
+using namespace sf; // przedrostek na poczÄ…tky by nie dodawaÄ‡ go do kaÅ¼dej funkjci SFML
+
+
+void czypusteobok() {
+
+}
 
 int main()
 {
 
-    srand(time(0)); // kij wie co, jakiœ czas potrzebny do losowania
+    srand(time(0)); // kij wie co, jakiÅ› czas potrzebny do losowania
 
     ///tworzenie planszy///
 
@@ -41,27 +44,27 @@ int main()
     for (int i = 1; i <= 10; i++) {
         for (int j = 1; j <= 10; j++) {
             sgrid[i][j] = 10;
-            if (rand() % 5 == 0) grid[i][j] = 9;
+            if (rand() % 7 == 0) grid[i][j] = 9; // tu moÅ¼na wybraÄ‡ jak duÅ¼o chce siÄ™ mieÄ‡ bomb
             else grid[i][j] = 0;
         }
     }
 
 
-    ///numeracja kafelków zale¿nych od po³o¿enia bomb///
+    ///numeracja kafelkÃ³w zaleÅ¼nych od poÅ‚oÅ¼enia bomb///
 
     for (int i = 1; i <= 10; i++) {
         for (int j = 1; j <= 10; j++) {
-            
+
             int n = 0;
             if (grid[i][j] == 9) continue;
-            if (grid[i+1][j] == 9) n++;
+            if (grid[i + 1][j] == 9) n++;
             if (grid[i][j + 1] == 9) n++;
-            if (grid[i-1][j] == 9) n++;
+            if (grid[i - 1][j] == 9) n++;
             if (grid[i][j - 1] == 9) n++;
             if (grid[i + 1][j + 1] == 9) n++;
-            if (grid[i-1][j-1] == 9) n++;
-            if (grid[i-1][j+1] == 9) n++;
-            if (grid[i+1][j-1] == 9) n++;
+            if (grid[i - 1][j - 1] == 9) n++;
+            if (grid[i - 1][j + 1] == 9) n++;
+            if (grid[i + 1][j - 1] == 9) n++;
             grid[i][j] = n;
 
         }
@@ -69,43 +72,44 @@ int main()
 
     ///otwieranie okna gry///
 
-    while (window.isOpen()) {
-
-
-        ///pozycja myszki///
-
+    while (window.isOpen())
+    {
         Vector2i pos = Mouse::getPosition(window);
         int x = pos.x / w;
         int y = pos.y / w;
+        bool mbleft = false;
 
         Event e;
-        while (window.pollEvent(e)) {
-            if (e.type == Event::Closed) {
+        while (window.pollEvent(e))
+        {
+            if (e.type == Event::Closed)
                 window.close();
-            }
-
 
             if (e.type == Event::MouseButtonPressed)
-                if (e.key.code == Mouse::Left) sgrid[x][y] = grid[x][y]; // odkrywanie kafelka
-                else if (e.key.code == Mouse::Right) sgrid[x][y]= 11; // oznaczanie kafelka flag¹
+                if (e.key.code == Mouse::Left)
+                {
+                    sgrid[x][y] = grid[x][y];
+                    mbleft = true;
+
+                }
+                else if (e.key.code == Mouse::Right) sgrid[x][y] = 11;
+
         }
 
         window.clear(Color::White);
         for (int i = 1; i <= 10; i++) {
+
             for (int j = 1; j <= 10; j++) {
 
-               if(sgrid[x][y]==9) sgrid[i][j] = grid[i][j]; // je¿eli kafelek jest bomb¹ odkryj wszystkie
+                if (mbleft && sgrid[x][y] == 9) sgrid[i][j] = grid[i][j];
+
                 s.setTextureRect(IntRect(sgrid[i][j] * w, 0, w, w));
-                s.setPosition(i * w, j * w);  // zaznaczenie miejsca rysowania kafelka
-                window.draw(s); // rysowanie kafelka
+                s.setPosition(i * w, j * w);
+                window.draw(s);
             }
 
         }
-        window.display(); 
-
+        window.display();
     }
-
-
-
     return 0;
 }
