@@ -1,56 +1,70 @@
 #include <SFML/Graphics.hpp> // biblioteka graficzna
 #include <time.h> 
+#include <string.h>
 
-/* Co dodaÄ‡?
-* naprawiÄ‡ by dziaÅ‚aÅ‚o
-* licznik czasu
-* przycisk resetu
-* fajny komunikat o przegranej
+/* Co dodaæ?
+* licznik czasu// w sobotê z tym podzia³am
+* fajny komunikat o przegranej// dodam w sobote
 * menu?
 *
 */
 
 
 using namespace std;
-using namespace sf; // przedrostek na poczÄ…tky by nie dodawaÄ‡ go do kaÅ¼dej funkjci SFML
+using namespace sf; // przedrostek na pocz¹tky by nie dodawaæ go do ka¿dej funkjci SFML
 
+int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // da³em poza maina ¿eby dzia³a³o w funkcjach
+int sgrid[12][12]; // 12 wierszy 12 kolumn siatka zakryta
 
-void czypusteobok() {
+void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia³a
 
+{
+    // Sprawdzam, czy pole jest ju¿ odkryte lub czy jest bomb¹
+    if (sgrid[x][y] == 9 || sgrid[x][y] == 0) return;
+
+    // Odkrywamy pole
+    sgrid[x][y] = grid[x][y];
+
+    // Jeœli pole jest puste, to odkrywam równie¿ s¹siednie pola
+    if (grid[x][y] == 0)
+    {
+        if (x > 1) odkryjPuste(x - 1, y); // pole po lewej
+        if (x < 12) odkryjPuste(x + 1, y); // pole po prawej
+        if (y > 1) odkryjPuste(x, y - 1); // pole u góry
+        if (y < 12) odkryjPuste(x, y + 1); // pole na dole
+    }
 }
-
 int main()
 {
 
-    srand(time(0)); // kij wie co, jakiÅ› czas potrzebny do losowania
+    srand(time(0)); // kij wie co, jakiœ czas potrzebny do losowania
 
     ///tworzenie planszy///
 
-    RenderWindow window(VideoMode(400, 400), "Saper"); // tworzymy okno gry
+    RenderWindow window(VideoMode(500, 500), "Saper"); // tworzymy okno gry
 
     int w = 32; // pole do popisu
-    int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta
-    int sgrid[12][12]; // 12 wierszy 12 kolumn siatka zakryta
-
+  
     ///import tekstur///
 
     Texture t;
     t.loadFromFile("images/tiles.jpg");
     Sprite s(t);
-
+   
+   
 
     ///losowanie miejsc bomb////
 
     for (int i = 1; i <= 10; i++) {
         for (int j = 1; j <= 10; j++) {
             sgrid[i][j] = 10;
-            if (rand() % 7 == 0) grid[i][j] = 9; // tu moÅ¼na wybraÄ‡ jak duÅ¼o chce siÄ™ mieÄ‡ bomb
+            if (rand() % 7 == 0) grid[i][j] = 9; // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
             else grid[i][j] = 0;
         }
     }
 
 
-    ///numeracja kafelkÃ³w zaleÅ¼nych od poÅ‚oÅ¼enia bomb///
+    ///numeracja kafelków zale¿nych od po³o¿enia bomb///
 
     for (int i = 1; i <= 10; i++) {
         for (int j = 1; j <= 10; j++) {
@@ -69,9 +83,15 @@ int main()
 
         }
     }
+   
+    //Przycisk
+    
+    RectangleShape resetButton(Vector2f(100, 50));
+    resetButton.setFillColor(Color::Red);
+    resetButton.setPosition(400, 0); // Ustawiam pozycjê przycisku na ekranie
 
     ///otwieranie okna gry///
-
+   
     while (window.isOpen())
     {
         Vector2i pos = Mouse::getPosition(window);
@@ -109,6 +129,49 @@ int main()
             }
 
         }
+        if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
+        {
+            // Pobieram pozycjê kursora myszy na ekranie
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            // Sprawdzam, czy kursor myszy znajduje siê nad obszarem przycisku
+            if (resetButton.getGlobalBounds().contains(mousePos.x, mousePos.y))
+            {
+                // Jeœli tak, to resetuje grê
+                for (int i = 1; i <= 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        sgrid[i][j] = 10;
+                    }
+                }
+
+                // Losuje nowe po³o¿enie bomb
+                for (int i = 1; i <= 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        if (rand() % 7 == 0) grid[i][j] = 9; // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
+                        else grid[i][j] = 0;
+                    }
+                }
+                for (int i = 1; i <= 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+
+                        int n = 0;
+                        if (grid[i][j] == 9) continue;
+                        if (grid[i + 1][j] == 9) n++;
+                        if (grid[i][j + 1] == 9) n++;
+                        if (grid[i - 1][j] == 9) n++;
+                        if (grid[i][j - 1] == 9) n++;
+                        if (grid[i + 1][j + 1] == 9) n++;
+                        if (grid[i - 1][j - 1] == 9) n++;
+                        if (grid[i - 1][j + 1] == 9) n++;
+                        if (grid[i + 1][j - 1] == 9) n++;
+                        grid[i][j] = n;
+
+                    }
+                }
+                mbleft = false;
+            }
+        }
+        // Rysujê przycisk na ekranie
+        window.draw(resetButton);
         window.display();
     }
     return 0;
