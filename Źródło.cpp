@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp> // biblioteka graficzna
+#include <SFML/Audio.hpp>
 #include <time.h> 
 #include <string.h>
 
@@ -44,14 +45,30 @@ int main()
     RenderWindow window(VideoMode(500, 500), "Saper"); // tworzymy okno gry
 
     int w = 32; // pole do popisu
-  
+
     ///import tekstur///
 
     Texture t;
     t.loadFromFile("images/tiles.jpg");
     Sprite s(t);
-   
-   
+
+
+    ///import czcionki////
+    Font open_sans;
+    open_sans.loadFromFile("czcionki/opensus.ttf");
+
+
+    //Dzika muzyka
+
+    Music muzyczka;
+    muzyczka.openFromFile("dzwieki/tlomuzyka.ogg");
+    muzyczka.setVolume(2.f);
+    muzyczka.setLoop(true); // zapêtlanie utworu
+    muzyczka.play();
+
+
+
+
 
     ///losowanie miejsc bomb////
 
@@ -83,15 +100,34 @@ int main()
 
         }
     }
-   
+
     //Przycisk
-    
+
     RectangleShape resetButton(Vector2f(100, 50));
     resetButton.setFillColor(Color::Red);
+    resetButton.setOutlineThickness(5);
+    resetButton.setOutlineColor(Color(163, 26, 16));
     resetButton.setPosition(400, 0); // Ustawiam pozycjê przycisku na ekranie
 
+
+    //Napis Resetu
+
+
+    Text reset;
+    reset.setFont(open_sans);
+    reset.setString("Reset!");
+    reset.setFillColor(Color::Black);
+    reset.setPosition(410, 0);
+
+
+
+
+
+
+
+
     ///otwieranie okna gry///
-   
+
     while (window.isOpen())
     {
         Vector2i pos = Mouse::getPosition(window);
@@ -172,6 +208,7 @@ int main()
         }
         // Rysujê przycisk na ekranie
         window.draw(resetButton);
+        window.draw(reset);
         window.display();
     }
     return 0;
