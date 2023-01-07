@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <time.h> 
 #include <string.h>
+#include <iostream>
 
 /* Co dodaæ?
 * licznik czasu// w sobotê z tym podzia³am
@@ -46,6 +47,7 @@ int main()
     RenderWindow window(VideoMode(510, 500), "Saper"); // tworzymy okno gry
 
     int w = 32; // pole do popisu
+    int iloscmin = 0;
 
     ///import tekstur///
 
@@ -91,7 +93,10 @@ int main()
     for (int i = 1; i <= 10; i++) {
         for (int j = 1; j <= 10; j++) {
             sgrid[i][j] = 10;
-            if (rand() % 7 == 0) grid[i][j] = 9; // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
+            if (rand() % 7 == 0) { // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
+                grid[i][j] = 9;
+                iloscmin++;
+            }
             else grid[i][j] = 0;
         }
     }
@@ -123,7 +128,7 @@ int main()
     resetButton.setFillColor(Color::Red);
     resetButton.setOutlineThickness(5);
     resetButton.setOutlineColor(Color(163, 26, 16));
-    resetButton.setPosition(400, 0); // Ustawiam pozycjê przycisku na ekranie
+    resetButton.setPosition(400, 10); // Ustawiam pozycjê przycisku na ekranie
 
 
     //Napis Resetu
@@ -132,11 +137,12 @@ int main()
     Text reset;
     reset.setFont(open_sans);
     reset.setString("Reset!");
-    reset.setFillColor(Color::Black);
-    reset.setPosition(410, 0);
+    reset.setFillColor(Color(158, 8, 33));
+    reset.setStyle(sf::Text::Bold);
+    reset.setPosition(410, 15);
 
 
-
+    cout << iloscmin;
     ///otwieranie okna gry///
 
     while (window.isOpen())
@@ -178,7 +184,26 @@ int main()
               
         }
 
-        window.clear(Color::White);
+        // sprawdzamy czy wygrana
+
+        int miny = 0;
+
+        for (int i = 1; i <= 10; i++) {
+
+
+            for (int j = 1; j <= 10; j++) {
+
+                if (sgrid[i][j] != 0) miny++;
+
+
+            }
+
+
+        }
+        if (miny == iloscmin) window.clear(Color::Black);
+
+
+        window.clear(Color:: White);  // ustawia nowe okno o kolorze bia³ym
         for (int i = 1; i <= 10; i++) {
 
             for (int j = 1; j <= 10; j++) {
@@ -203,6 +228,7 @@ int main()
             // Sprawdzam, czy kursor myszy znajduje siê nad obszarem przycisku
             if (resetButton.getGlobalBounds().contains(mousePos.x, mousePos.y))
             {
+                iloscmin = 0;
                 // Jeœli tak, to resetuje grê
                 for (int i = 1; i <= 10; i++) {
                     for (int j = 1; j <= 10; j++) {
@@ -213,10 +239,14 @@ int main()
                 // Losuje nowe po³o¿enie bomb
                 for (int i = 1; i <= 10; i++) {
                     for (int j = 1; j <= 10; j++) {
-                        if (rand() % 7 == 0) grid[i][j] = 9; // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
+                        if (rand() % 7 == 0) {
+                            grid[i][j] = 9; // tu mo¿na wybraæ jak du¿o chce siê mieæ bomb
+                            iloscmin++;
+                        }
                         else grid[i][j] = 0;
                     }
                 }
+               
                 for (int i = 1; i <= 10; i++) {
                     for (int j = 1; j <= 10; j++) {
 
@@ -236,12 +266,17 @@ int main()
                 }
                 mbleft = false;
                 muzyczka.play();
+                
             }
         }
+
         // wizualizowanie zawartoœci
         window.draw(resetButton);
         window.draw(reset);
         window.display();
+
+        
     }
+    
     return 0;
 }
