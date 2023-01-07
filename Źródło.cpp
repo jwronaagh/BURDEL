@@ -11,6 +11,7 @@
 */
 
 
+
 using namespace std;
 using namespace sf; // przedrostek na pocz¹tky by nie dodawaæ go do ka¿dej funkjci SFML
 
@@ -40,9 +41,9 @@ int main()
 
     srand(time(0)); // kij wie co, jakiœ czas potrzebny do losowania
 
-    ///tworzenie planszy///
+    ///wymiary planszy///
 
-    RenderWindow window(VideoMode(500, 500), "Saper"); // tworzymy okno gry
+    RenderWindow window(VideoMode(510, 500), "Saper"); // tworzymy okno gry
 
     int w = 32; // pole do popisu
 
@@ -66,6 +67,21 @@ int main()
     muzyczka.setLoop(true); // zapêtlanie utworu
     muzyczka.play();
 
+
+    //Dzikie dŸwiêki
+
+
+    SoundBuffer bufferklik;
+    bufferklik.loadFromFile("dzwieki/klik.wav");
+
+    Sound klik;
+    klik.setBuffer(bufferklik);
+
+    SoundBuffer bufferwybuch;
+    bufferwybuch.loadFromFile("dzwieki/wybuch.wav");
+
+    Sound wybuch;
+    wybuch.setBuffer(bufferwybuch);
 
 
 
@@ -121,11 +137,6 @@ int main()
 
 
 
-
-
-
-
-
     ///otwieranie okna gry///
 
     while (window.isOpen())
@@ -141,15 +152,30 @@ int main()
             if (e.type == Event::Closed)
                 window.close();
 
+            // odkrywanie pól
+
             if (e.type == Event::MouseButtonPressed)
                 if (e.key.code == Mouse::Left)
                 {
                     sgrid[x][y] = grid[x][y];
                     mbleft = true;
+                    klik.play();
 
                 }
-                else if (e.key.code == Mouse::Right) sgrid[x][y] = 11;
 
+                // zaznaczanie nieodkrytych pól flagami
+                else if (e.key.code == Mouse::Right) { 
+
+                    if (sgrid[x][y] == 10) sgrid[x][y] = 11;
+                    else if (sgrid[x][y] == 11) sgrid[x][y] = 10;
+
+
+                }
+                    
+                    
+                    
+                    
+              
         }
 
         window.clear(Color::White);
@@ -157,11 +183,16 @@ int main()
 
             for (int j = 1; j <= 10; j++) {
 
-                if (mbleft && sgrid[x][y] == 9) sgrid[i][j] = grid[i][j];
+                if (mbleft && sgrid[x][y] == 9) { // trafienie na bombê
+                    sgrid[i][j] = grid[i][j];
+                    muzyczka.stop();
+                    wybuch.play();
+                }
 
                 s.setTextureRect(IntRect(sgrid[i][j] * w, 0, w, w));
                 s.setPosition(i * w, j * w);
                 window.draw(s);
+
             }
 
         }
@@ -204,9 +235,10 @@ int main()
                     }
                 }
                 mbleft = false;
+                muzyczka.play();
             }
         }
-        // Rysujê przycisk na ekranie
+        // wizualizowanie zawartoœci
         window.draw(resetButton);
         window.draw(reset);
         window.display();
