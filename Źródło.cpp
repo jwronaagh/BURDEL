@@ -3,21 +3,13 @@
 #include <time.h> 
 #include <string.h>
 #include <iostream>
-
-/* Co dodaƒá?
-* menu te≈º mnie pokona≈Ço same problemy z tym :/
-*
-*/
-
-
+#include <windows.h>
 
 using namespace std;
-using namespace sf; // przedrostek na poczƒÖtky by nie dodawaƒá go do ka≈ºdej funkjci SFML
+using namespace sf; // przedrostek na poczπtky by nie dodawaÊ go do kaødej funkjci SFML
 
-int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // da≈Çem poza maina ≈ºeby dzia≈Ça≈Ço w funkcjach
+int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // da≥em poza maina øeby dzia≥a≥o w funkcjach
 int sgrid[12][12]; // 12 wierszy 12 kolumn siatka
-
-
 
 bool czyWygrana()
 {
@@ -25,29 +17,29 @@ bool czyWygrana()
 	{
 		for (int j = 1; j <= 10; j++)
 		{
-			// Je≈õli pole jest zakryte i nie jest bombƒÖ, to znaczy, ≈ºe gracz jeszcze nie wygra≈Ç
+			// Jeúli pole jest zakryte i nie jest bombπ, to znaczy, øe gracz jeszcze nie wygra≥
 			if (sgrid[i][j] == 10 && grid[i][j] != 9) return false;
 		}
 	}
-	
+
 	return true;
 }
 
-void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≈Ça
+void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≥a
 
 {
-	// Sprawdzam, czy pole jest ju≈º odkryte lub czy jest bombƒÖ
+	// Sprawdzam, czy pole jest juø odkryte lub czy jest bombπ
 	if (sgrid[x][y] == 9 || sgrid[x][y] == 0) return;
 
 	// Odkrywamy pole
 	sgrid[x][y] = grid[x][y];
 
-	// Je≈õli pole jest puste, to odkrywam r√≥wnie≈º sƒÖsiednie pola
+	// Jeúli pole jest puste, to odkrywam rÛwnieø sπsiednie pola
 	if (grid[x][y] == 0)
 	{
 		if (x > 1) odkryjPuste(x - 1, y); // pole po lewej
 		if (x < 12) odkryjPuste(x + 1, y); // pole po prawej
-		if (y > 1) odkryjPuste(x, y - 1); // pole u g√≥ry
+		if (y > 1) odkryjPuste(x, y - 1); // pole u gÛry
 		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
 	}
 }
@@ -55,9 +47,11 @@ void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≈Ça
 
 int main()
 {
-	bool Przegrana = false; // ustawiamy na false na poczƒÖtku gry
+	restart:
 
-	srand(time(0)); // kij wie co, jaki≈õ czas potrzebny do losowania
+	bool Przegrana = false; // ustawiamy na false na poczπtku gry
+
+	srand(time(0)); // kij wie co, jakiú czas potrzebny do losowania
 
 	///wymiary planszy///
 
@@ -83,10 +77,10 @@ int main()
 	Music muzyczka;
 	muzyczka.openFromFile("dzwieki/tlomuzyka.ogg");
 	muzyczka.setVolume(2.f);
-	muzyczka.setLoop(true); // zapƒôtlanie utworu
+	muzyczka.setLoop(true); // zapÍtlanie utworu
 	muzyczka.play();
 
-	//Dzikie d≈∫wiƒôki
+	//Dzikie düwiÍki
 	SoundBuffer bufferklik;
 	bufferklik.loadFromFile("dzwieki/klik.wav");
 
@@ -99,12 +93,21 @@ int main()
 	Sound wybuch;
 	wybuch.setBuffer(bufferwybuch);
 
+
+	SoundBuffer bufferwygrana;
+	bufferwygrana.loadFromFile("dzwieki/wygrana.wav");
+
+	Sound wygranadzwiek;
+	wygranadzwiek.setBuffer(bufferwygrana);
+
+
+
 	//Przycisk
 	RectangleShape resetButton(Vector2f(100, 50));
 	resetButton.setFillColor(Color::Red);
 	resetButton.setOutlineThickness(5);
 	resetButton.setOutlineColor(Color(163, 26, 16));
-	resetButton.setPosition(150, 400); // Ustawiam pozycjƒô przycisku na ekranie
+	resetButton.setPosition(150, 400); // Ustawiam pozycjÍ przycisku na ekranie
 	//Napis Resetu
 	Text reset;
 	reset.setFont(open_sans);
@@ -136,7 +139,7 @@ int main()
 	bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 	bombText.setPosition(10, 10);
 	//Bomby oznaczone
-	int bombsMarked = 0; // ilo≈õƒá oznaczonych bomb
+	int bombsMarked = 0; // iloúÊ oznaczonych bomb
 	Text bombyOznaczone;
 	bombyOznaczone.setFont(open_sans);
 	bombyOznaczone.setCharacterSize(14);
@@ -160,7 +163,7 @@ int main()
 	for (int i = 1; i <= 10; i++) {
 		for (int j = 1; j <= 10; j++) {
 			sgrid[i][j] = 10;
-			if (rand() % 7 == 0) { // tu mo≈ºna wybraƒá jak du≈ºo chce siƒô mieƒá bomb
+			if (rand() % 7 == 0) { // tu moøna wybraÊ jak duøo chce siÍ mieÊ bomb
 				grid[i][j] = 9;
 				iloscmin++;
 			}
@@ -168,7 +171,7 @@ int main()
 		}
 	}
 
-	///numeracja kafelk√≥w zale≈ºnych od po≈Ço≈ºenia bomb///
+	///numeracja kafelkÛw zaleønych od po≥oøenia bomb///
 
 	for (int i = 1; i <= 10; i++) {
 		for (int j = 1; j <= 10; j++) {
@@ -194,23 +197,30 @@ int main()
 	{
 		Event e;
 
+		Vector2i pos = Mouse::getPosition(window);
+
+		int x = pos.x / w;
+
+		int y = pos.y / w;
+
+		bool mbleft = false;
+
 		elapsedTime = clock.getElapsedTime();
 		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
 
-		Vector2i pos = Mouse::getPosition(window);
-		int x = pos.x / w;
-		int y = pos.y / w;
-		bool mbleft = false;
+		bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
+
+		bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 
 		while (window.pollEvent(e))
 		{
 			if (e.type == Event::Closed)
 				window.close();
 
-			// odkrywanie p√≥l
+			// odkrywanie pÛl
 
-
-			if (e.type == Event::MouseButtonPressed)
+			
+			if (e.type == Event::MouseButtonPressed) {
 				if (e.key.code == Mouse::Left)
 				{
 					sgrid[x][y] = grid[x][y];
@@ -219,7 +229,10 @@ int main()
 
 				}
 
-			// zaznaczanie nieodkrytych p√≥l flagami
+
+			}
+
+			// zaznaczanie nieodkrytych pÛl flagami
 				else if (e.key.code == Mouse::Right) {
 
 					if (sgrid[x][y] == 10) {
@@ -234,7 +247,7 @@ int main()
 
 					}
 
-					bombyOznaczone.setString("Oznaczone pola: " + to_string(bombsMarked));
+
 				}
 		}
 
@@ -253,15 +266,18 @@ int main()
 
 
 
-		window.clear(Color::White);  // ustawia nowe okno o kolorze bia≈Çym
+		window.clear(Color::White);  // ustawia nowe okno o kolorze bia≥ym
+
+
 		for (int i = 1; i <= 10; i++) {
 
 			for (int j = 1; j <= 10; j++) {
 
-				if (mbleft && sgrid[x][y] == 9) { // trafienie na bombƒô
+				if (mbleft && sgrid[x][y] == 9) { // trafienie na bombÍ
 					sgrid[i][j] = grid[i][j];
 					muzyczka.stop();
 					wybuch.play();
+
 				}
 
 				s.setTextureRect(IntRect(sgrid[i][j] * w, 0, w, w));
@@ -271,75 +287,21 @@ int main()
 			}
 
 		}
+
+
 		if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
 		{
-			// Pobieram pozycjƒô kursora myszy na ekranie
+			// Pobieram pozycjÍ kursora myszy na ekranie
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-			// Sprawdzam, czy kursor myszy znajduje siƒô nad obszarem przycisku
+			// Sprawdzam, czy kursor myszy znajduje siÍ nad obszarem przycisku
 			if (resetButton.getGlobalBounds().contains(mousePos.x, mousePos.y))
 			{
-				iloscmin = 0;
-				// Je≈õli tak, to resetuje grƒô
-				for (int i = 1; i <= 10; i++) {
-					for (int j = 1; j <= 10; j++) {
-						sgrid[i][j] = 10;
-					}
-				}
 
-				// Losuje nowe po≈Ço≈ºenie bomb
-				for (int i = 1; i <= 10; i++) {
-					for (int j = 1; j <= 10; j++) {
-						if (rand() % 70 == 0) {
-							grid[i][j] = 9; // tu mo≈ºna wybraƒá jak du≈ºo chce siƒô mieƒá bomb
-							iloscmin++;
-						}
-						else grid[i][j] = 0;
-					}
-				}
-
-				for (int i = 1; i <= 10; i++) {
-					for (int j = 1; j <= 10; j++) {
-
-						int n = 0;
-						if (grid[i][j] == 9) continue;
-						if (grid[i + 1][j] == 9) n++;
-						if (grid[i][j + 1] == 9) n++;
-						if (grid[i - 1][j] == 9) n++;
-						if (grid[i][j - 1] == 9) n++;
-						if (grid[i + 1][j + 1] == 9) n++;
-						if (grid[i - 1][j - 1] == 9) n++;
-						if (grid[i - 1][j + 1] == 9) n++;
-						if (grid[i + 1][j - 1] == 9) n++;
-						grid[i][j] = n;
-
-					}
-				}
-				// Aktualizuje ilo≈õƒá bomb
-				iloscmin = 0;
-				for (int i = 1; i <= 10; i++)
-				{
-					for (int j = 1; j <= 10; j++)
-					{
-						if (grid[i][j] == 9) iloscmin++;
-
-					}
-				}
-
-				// Aktualizuje tekst z ilo≈õciƒÖ bomb
-				bombText.setString("Ilosc bomb: " + to_string(iloscmin));
-				bombsMarked = 0;
-				bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
-
-				clock.restart();
-
-				mbleft = false;
-				muzyczka.play();
+				goto restart;
 
 			}
 		}
 
-		
-		
 		if (mbleft && sgrid[x][y] == 9)
 		{
 			Przegrana = true;
@@ -348,13 +310,15 @@ int main()
 			sleep(seconds(3));
 		}
 		if (!Przegrana && czyWygrana()) {
-			
+
 			window.draw(wygrana);
 			window.display();
+			wygranadzwiek.play();
 			sleep(seconds(3));
 			window.close();
 
 		}
+
 		bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 
 		window.draw(timerText);
