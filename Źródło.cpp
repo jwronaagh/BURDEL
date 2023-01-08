@@ -4,18 +4,20 @@
 #include <string.h>
 #include <iostream>
 
-/* Co dodaÊ?
-* menu teø mnie pokona≥o same problemy z tym :/
+/* Co dodaƒá?
+* menu te≈º mnie pokona≈Ço same problemy z tym :/
 *
 */
 
 
 
 using namespace std;
-using namespace sf; // przedrostek na poczπtky by nie dodawaÊ go do kaødej funkjci SFML
+using namespace sf; // przedrostek na poczƒÖtky by nie dodawaƒá go do ka≈ºdej funkjci SFML
 
-int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // da≥em poza maina øeby dzia≥a≥o w funkcjach
-int sgrid[12][12]; // 12 wierszy 12 kolumn siatka zakryta
+int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // da≈Çem poza maina ≈ºeby dzia≈Ça≈Ço w funkcjach
+int sgrid[12][12]; // 12 wierszy 12 kolumn siatka
+
+
 
 bool czyWygrana()
 {
@@ -23,28 +25,29 @@ bool czyWygrana()
 	{
 		for (int j = 1; j <= 10; j++)
 		{
-			// Jeúli pole jest zakryte i nie jest bombπ, to znaczy, øe gracz jeszcze nie wygra≥
+			// Je≈õli pole jest zakryte i nie jest bombƒÖ, to znaczy, ≈ºe gracz jeszcze nie wygra≈Ç
 			if (sgrid[i][j] == 10 && grid[i][j] != 9) return false;
 		}
 	}
+	
 	return true;
 }
 
-void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≥a
+void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≈Ça
 
 {
-	// Sprawdzam, czy pole jest juø odkryte lub czy jest bombπ
+	// Sprawdzam, czy pole jest ju≈º odkryte lub czy jest bombƒÖ
 	if (sgrid[x][y] == 9 || sgrid[x][y] == 0) return;
 
 	// Odkrywamy pole
 	sgrid[x][y] = grid[x][y];
 
-	// Jeúli pole jest puste, to odkrywam rÛwnieø sπsiednie pola
+	// Je≈õli pole jest puste, to odkrywam r√≥wnie≈º sƒÖsiednie pola
 	if (grid[x][y] == 0)
 	{
 		if (x > 1) odkryjPuste(x - 1, y); // pole po lewej
 		if (x < 12) odkryjPuste(x + 1, y); // pole po prawej
-		if (y > 1) odkryjPuste(x, y - 1); // pole u gÛry
+		if (y > 1) odkryjPuste(x, y - 1); // pole u g√≥ry
 		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
 	}
 }
@@ -52,8 +55,9 @@ void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia≥a
 
 int main()
 {
+	bool Przegrana = false; // ustawiamy na false na poczƒÖtku gry
 
-	srand(time(0)); // kij wie co, jakiú czas potrzebny do losowania
+	srand(time(0)); // kij wie co, jaki≈õ czas potrzebny do losowania
 
 	///wymiary planszy///
 
@@ -79,10 +83,10 @@ int main()
 	Music muzyczka;
 	muzyczka.openFromFile("dzwieki/tlomuzyka.ogg");
 	muzyczka.setVolume(2.f);
-	muzyczka.setLoop(true); // zapÍtlanie utworu
+	muzyczka.setLoop(true); // zapƒôtlanie utworu
 	muzyczka.play();
 
-	//Dzikie düwiÍki
+	//Dzikie d≈∫wiƒôki
 	SoundBuffer bufferklik;
 	bufferklik.loadFromFile("dzwieki/klik.wav");
 
@@ -100,7 +104,7 @@ int main()
 	resetButton.setFillColor(Color::Red);
 	resetButton.setOutlineThickness(5);
 	resetButton.setOutlineColor(Color(163, 26, 16));
-	resetButton.setPosition(150, 400); // Ustawiam pozycjÍ przycisku na ekranie
+	resetButton.setPosition(150, 400); // Ustawiam pozycjƒô przycisku na ekranie
 	//Napis Resetu
 	Text reset;
 	reset.setFont(open_sans);
@@ -132,13 +136,13 @@ int main()
 	bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 	bombText.setPosition(10, 10);
 	//Bomby oznaczone
-	int bombsMarked = 0; // iloúÊ oznaczonych bomb
+	int bombsMarked = 0; // ilo≈õƒá oznaczonych bomb
 	Text bombyOznaczone;
 	bombyOznaczone.setFont(open_sans);
 	bombyOznaczone.setCharacterSize(14);
 	bombyOznaczone.setFillColor(Color::Black);
 	bombyOznaczone.setPosition(275, 10);
-
+	//Timer
 	Clock clock;
 	Time elapsedTime;
 	Text timerText;
@@ -156,7 +160,7 @@ int main()
 	for (int i = 1; i <= 10; i++) {
 		for (int j = 1; j <= 10; j++) {
 			sgrid[i][j] = 10;
-			if (rand() % 7 == 0) { // tu moøna wybraÊ jak duøo chce siÍ mieÊ bomb
+			if (rand() % 7 == 0) { // tu mo≈ºna wybraƒá jak du≈ºo chce siƒô mieƒá bomb
 				grid[i][j] = 9;
 				iloscmin++;
 			}
@@ -164,7 +168,7 @@ int main()
 		}
 	}
 
-	///numeracja kafelkÛw zaleønych od po≥oøenia bomb///
+	///numeracja kafelk√≥w zale≈ºnych od po≈Ço≈ºenia bomb///
 
 	for (int i = 1; i <= 10; i++) {
 		for (int j = 1; j <= 10; j++) {
@@ -184,7 +188,7 @@ int main()
 		}
 	}
 
-	
+
 
 	while (window.isOpen())
 	{
@@ -203,7 +207,7 @@ int main()
 			if (e.type == Event::Closed)
 				window.close();
 
-			// odkrywanie pÛl
+			// odkrywanie p√≥l
 
 
 			if (e.type == Event::MouseButtonPressed)
@@ -215,7 +219,7 @@ int main()
 
 				}
 
-			// zaznaczanie nieodkrytych pÛl flagami
+			// zaznaczanie nieodkrytych p√≥l flagami
 				else if (e.key.code == Mouse::Right) {
 
 					if (sgrid[x][y] == 10) {
@@ -229,7 +233,7 @@ int main()
 						bombsMarked--;
 
 					}
-					
+
 					bombyOznaczone.setString("Oznaczone pola: " + to_string(bombsMarked));
 				}
 		}
@@ -240,25 +244,21 @@ int main()
 
 		for (int i = 1; i <= 10; i++) {
 
-
 			for (int j = 1; j <= 10; j++) {
 
 				if (sgrid[i][j] != 0) miny++;
 
-
 			}
-
-
 		}
 
 
 
-		window.clear(Color::White);  // ustawia nowe okno o kolorze bia≥ym
+		window.clear(Color::White);  // ustawia nowe okno o kolorze bia≈Çym
 		for (int i = 1; i <= 10; i++) {
 
 			for (int j = 1; j <= 10; j++) {
 
-				if (mbleft && sgrid[x][y] == 9) { // trafienie na bombÍ
+				if (mbleft && sgrid[x][y] == 9) { // trafienie na bombƒô
 					sgrid[i][j] = grid[i][j];
 					muzyczka.stop();
 					wybuch.play();
@@ -273,24 +273,24 @@ int main()
 		}
 		if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
 		{
-			// Pobieram pozycjÍ kursora myszy na ekranie
+			// Pobieram pozycjƒô kursora myszy na ekranie
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-			// Sprawdzam, czy kursor myszy znajduje siÍ nad obszarem przycisku
+			// Sprawdzam, czy kursor myszy znajduje siƒô nad obszarem przycisku
 			if (resetButton.getGlobalBounds().contains(mousePos.x, mousePos.y))
 			{
 				iloscmin = 0;
-				// Jeúli tak, to resetuje grÍ
+				// Je≈õli tak, to resetuje grƒô
 				for (int i = 1; i <= 10; i++) {
 					for (int j = 1; j <= 10; j++) {
 						sgrid[i][j] = 10;
 					}
 				}
 
-				// Losuje nowe po≥oøenie bomb
+				// Losuje nowe po≈Ço≈ºenie bomb
 				for (int i = 1; i <= 10; i++) {
 					for (int j = 1; j <= 10; j++) {
-						if (rand() % 50 == 0) {
-							grid[i][j] = 9; // tu moøna wybraÊ jak duøo chce siÍ mieÊ bomb
+						if (rand() % 70 == 0) {
+							grid[i][j] = 9; // tu mo≈ºna wybraƒá jak du≈ºo chce siƒô mieƒá bomb
 							iloscmin++;
 						}
 						else grid[i][j] = 0;
@@ -314,7 +314,7 @@ int main()
 
 					}
 				}
-				// Aktualizuje iloúÊ bomb
+				// Aktualizuje ilo≈õƒá bomb
 				iloscmin = 0;
 				for (int i = 1; i <= 10; i++)
 				{
@@ -325,7 +325,7 @@ int main()
 					}
 				}
 
-				// Aktualizuje tekst z iloúciπ bomb
+				// Aktualizuje tekst z ilo≈õciƒÖ bomb
 				bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 				bombsMarked = 0;
 				bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
@@ -338,20 +338,24 @@ int main()
 			}
 		}
 
+		
+		
 		if (mbleft && sgrid[x][y] == 9)
 		{
+			Przegrana = true;
 			window.draw(przegrana);
 			window.display();
-			sleep(sf::seconds(3));
+			sleep(seconds(3));
 		}
-		if (czyWygrana()) {
-
+		if (!Przegrana && czyWygrana()) {
+			
 			window.draw(wygrana);
 			window.display();
-			sleep(sf::seconds(3));
+			sleep(seconds(3));
+			window.close();
 
 		}
-
+		bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 
 		window.draw(timerText);
 		window.draw(bombyOznaczone);
