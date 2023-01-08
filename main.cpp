@@ -4,20 +4,11 @@
 #include <string.h>
 #include <iostream>
 
-/* Co dodać?
-* menu też mnie pokonało same problemy z tym :/
-*
-*/
-
-
-
 using namespace std;
 using namespace sf; // przedrostek na początky by nie dodawać go do każdej funkjci SFML
 
 int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // dałem poza maina żeby działało w funkcjach
 int sgrid[12][12]; // 12 wierszy 12 kolumn siatka
-
-
 
 bool czyWygrana()
 {
@@ -56,8 +47,6 @@ void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie działa
 int main()
 {
 	bool Przegrana = false; // ustawiamy na false na początku gry
-	time_t start_time; // zmienna, w której będziemy przechowywać początkowy czas gry
-	time(&start_time);
 
 	srand(time(0)); // kij wie co, jakiś czas potrzebny do losowania
 
