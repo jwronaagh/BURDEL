@@ -25,7 +25,7 @@ bool czyWygrana()
 	return true;
 }
 
-/*void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia³a
+void odkryjPuste(int grid[x][y], int sgrid[x][y]) // NIE mam pojecia czemu nie dzia³a
 
 {
 	// Sprawdzam, czy pole jest ju¿ odkryte lub czy jest bomb¹
@@ -43,7 +43,7 @@ bool czyWygrana()
 		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
 	}
 }
-*/
+
 
 int main()
 {
@@ -196,6 +196,7 @@ int main()
 
 
 
+
 	while (window.isOpen())
 	{
 		Event e;
@@ -246,7 +247,7 @@ int main()
 				{
 
 
-					if (sgrid[x][y] == 11) {
+					if (sgrid[x][y] == 11) {   // usuwamy oznaczenie gdy odkrywamy obszar z flag¹
 
 						sgrid[x][y] = grid[x][y];
 						bombsMarked--;
@@ -254,7 +255,8 @@ int main()
 					}
 
 					sgrid[x][y] = grid[x][y];
-						
+
+					odkryjPuste(grid[x][y], sgrid[x][y]);
 
 					mbleft = true;
 					klik.play();
