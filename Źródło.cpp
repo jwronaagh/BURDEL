@@ -5,8 +5,8 @@
 #include <iostream>
 
 /* Co dodać?
-* licznik czasu// w sobotę z tym podziała
-* menu?
+* licznik czasu pokonało mnie ale w niedzile spróbije znowu za dużo errorów
+* menu też mnie pokonało same problemy z tym :/
 *
 */
 
@@ -81,6 +81,7 @@ int main()
 	Sound wybuch;
 	wybuch.setBuffer(bufferwybuch);
 
+	
 
 
 
@@ -138,13 +139,9 @@ int main()
 	przegrana.setCharacterSize(40);
 	przegrana.setFillColor(Color::Red);
 	przegrana.setPosition(110, 400);
-	//Napis wygranej
+	//Napis wygranej, nie wiem dalczego nie dziala warunek jest w 304 linijce
 	int odkryte_pola = 0;
-	for (int i = 1; i <= 10; i++) {
-		for (int j = 1; j <= 10; j++) { // Kodzik potzrzebny do komunikatu o wygranej
-			if (sgrid[i][j] == 0) odkryte_pola++;
-		}
-	}
+	
 	Text wygrana;
 	wygrana.setFont(open_sans);
 	wygrana.setString("Wygrana!");
@@ -158,8 +155,14 @@ int main()
 	bombText.setFillColor(Color::Black);
 	bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 	bombText.setPosition(10, 10);
-
-
+	//Bomby oznaczone
+	int bombsMarked = 0; // ilość oznaczonych bomb
+	Text bombyOznaczone;
+	bombyOznaczone.setFont(open_sans);
+	bombyOznaczone.setCharacterSize(14);
+	bombyOznaczone.setFillColor(Color::Black);	
+	bombyOznaczone.setPosition(215, 10);
+	
 
 	while (window.isOpen())
 	{
@@ -176,6 +179,7 @@ int main()
 
 			// odkrywanie pól
 
+
 			if (e.type == Event::MouseButtonPressed)
 				if (e.key.code == Mouse::Left)
 				{
@@ -190,8 +194,9 @@ int main()
 
 					if (sgrid[x][y] == 10) sgrid[x][y] = 11;
 					else if (sgrid[x][y] == 11) sgrid[x][y] = 10;
-
-
+					
+					bombsMarked++;
+					bombyOznaczone.setString("Ilosc oznaczone miny: " + to_string(bombsMarked));
 				}
 		}
 
@@ -248,7 +253,7 @@ int main()
 				// Losuje nowe położenie bomb
 				for (int i = 1; i <= 10; i++) {
 					for (int j = 1; j <= 10; j++) {
-						if (rand() % 7 == 0) {
+						if (rand() % 50 == 0) {
 							grid[i][j] = 9; // tu można wybrać jak dużo chce się mieć bomb
 							iloscmin++;
 						}
@@ -280,16 +285,21 @@ int main()
 					for (int j = 1; j <= 10; j++)
 					{
 						if (grid[i][j] == 9) iloscmin++;
+						
 					}
 				}
-
+				
 				// Aktualizuje tekst z ilością bomb
 				bombText.setString("Ilosc bomb: " + to_string(iloscmin));
+				bombsMarked = 0;
+				bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
+
 				mbleft = false;
 				muzyczka.play();
 
 			}
 		}
+		
 		if (sgrid[x][y] == 9)
 		{
 			window.draw(przegrana);
@@ -297,12 +307,19 @@ int main()
 			sleep(sf::seconds(3));
 		}
 		if (odkryte_pola == 100 - iloscmin) {
-			// gracz wygrał grę
+			
+			for (int i = 1; i <= 10; i++) {
+				for (int j = 1; j <= 10; j++) {
+					if (sgrid[i][j] == 0) odkryte_pola++;
+				}
+			}
 			window.draw(wygrana);
 			window.display();
 			sleep(sf::seconds(3));
 
 		}
+		
+		window.draw(bombyOznaczone);
 		window.draw(bombText);
 		window.draw(resetButton);
 		window.draw(reset);
