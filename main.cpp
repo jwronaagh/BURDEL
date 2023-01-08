@@ -15,7 +15,23 @@ using namespace std;
 using namespace sf; // przedrostek na początky by nie dodawać go do każdej funkjci SFML
 
 int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // dałem poza maina żeby działało w funkcjach
-int sgrid[12][12]; // 12 wierszy 12 kolumn siatka zakryta
+int sgrid[12][12]; // 12 wierszy 12 kolumn siatka
+
+
+
+bool czyWygrana()
+{
+	for (int i = 1; i <= 10; i++)
+	{
+		for (int j = 1; j <= 10; j++)
+		{
+			// Jeśli pole jest zakryte i nie jest bombą, to znaczy, że gracz jeszcze nie wygrał
+			if (sgrid[i][j] == 10 && grid[i][j] != 9) return false;
+		}
+	}
+
+	return true;
+}
 
 void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie działa
 
@@ -35,8 +51,13 @@ void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie działa
 		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
 	}
 }
+
+
 int main()
 {
+	bool Przegrana = false; // ustawiamy na false na początku gry
+	time_t start_time; // zmienna, w której będziemy przechowywać początkowy czas gry
+	time(&start_time);
 
 	srand(time(0)); // kij wie co, jakiś czas potrzebny do losowania
 
@@ -66,7 +87,7 @@ int main()
 	muzyczka.setVolume(2.f);
 	muzyczka.setLoop(true); // zapętlanie utworu
 	muzyczka.play();
-	
+
 	//Dzikie dźwięki
 	SoundBuffer bufferklik;
 	bufferklik.loadFromFile("dzwieki/klik.wav");
@@ -79,44 +100,6 @@ int main()
 
 	Sound wybuch;
 	wybuch.setBuffer(bufferwybuch);
-
-	
-
-
-
-	///losowanie miejsc bomb////
-
-	for (int i = 1; i <= 10; i++) {
-		for (int j = 1; j <= 10; j++) {
-			sgrid[i][j] = 10;
-			if (rand() % 7 == 0) { // tu można wybrać jak dużo chce się mieć bomb
-				grid[i][j] = 9;
-				iloscmin++;
-			}
-			else grid[i][j] = 0;
-		}
-	}
-
-
-	///numeracja kafelków zależnych od położenia bomb///
-
-	for (int i = 1; i <= 10; i++) {
-		for (int j = 1; j <= 10; j++) {
-
-			int n = 0;
-			if (grid[i][j] == 9) continue;
-			if (grid[i + 1][j] == 9) n++;
-			if (grid[i][j + 1] == 9) n++;
-			if (grid[i - 1][j] == 9) n++;
-			if (grid[i][j - 1] == 9) n++;
-			if (grid[i + 1][j + 1] == 9) n++;
-			if (grid[i - 1][j - 1] == 9) n++;
-			if (grid[i - 1][j + 1] == 9) n++;
-			if (grid[i + 1][j - 1] == 9) n++;
-			grid[i][j] = n;
-
-		}
-	}
 
 	//Przycisk
 	RectangleShape resetButton(Vector2f(100, 50));
@@ -140,7 +123,7 @@ int main()
 	przegrana.setPosition(110, 400);
 	//Napis wygranej, nie wiem dalczego nie dziala warunek jest w 304 linijce
 	int odkryte_pola = 0;
-	
+
 	Text wygrana;
 	wygrana.setFont(open_sans);
 	wygrana.setString("Wygrana!");
@@ -159,9 +142,9 @@ int main()
 	Text bombyOznaczone;
 	bombyOznaczone.setFont(open_sans);
 	bombyOznaczone.setCharacterSize(14);
-	bombyOznaczone.setFillColor(Color::Black);	
+	bombyOznaczone.setFillColor(Color::Black);
 	bombyOznaczone.setPosition(275, 10);
-	
+	//Timer
 	Clock clock;
 	Time elapsedTime;
 	Text timerText;
@@ -170,19 +153,60 @@ int main()
 	timerText.setCharacterSize(14);
 	timerText.setFillColor(Color::Black);
 	timerText.setPosition(150, 10);
-	
+
+
+
+
+	///losowanie miejsc bomb////
+
+	for (int i = 1; i <= 10; i++) {
+		for (int j = 1; j <= 10; j++) {
+			sgrid[i][j] = 10;
+			if (rand() % 7 == 0) { // tu można wybrać jak dużo chce się mieć bomb
+				grid[i][j] = 9;
+				iloscmin++;
+			}
+			else grid[i][j] = 0;
+		}
+	}
+
+	///numeracja kafelków zależnych od położenia bomb///
+
+	for (int i = 1; i <= 10; i++) {
+		for (int j = 1; j <= 10; j++) {
+
+			int n = 0;
+			if (grid[i][j] == 9) continue;
+			if (grid[i + 1][j] == 9) n++;
+			if (grid[i][j + 1] == 9) n++;
+			if (grid[i - 1][j] == 9) n++;
+			if (grid[i][j - 1] == 9) n++;
+			if (grid[i + 1][j + 1] == 9) n++;
+			if (grid[i - 1][j - 1] == 9) n++;
+			if (grid[i - 1][j + 1] == 9) n++;
+			if (grid[i + 1][j - 1] == 9) n++;
+			grid[i][j] = n;
+
+		}
+	}
+
+
 
 	while (window.isOpen())
 	{
 		Event e;
-		
+
+		Vector2i pos = Mouse::getPosition(window);
+
+		int x = pos.x / w;
+
+		int y = pos.y / w;
+
+		bool mbleft = false;
+
 		elapsedTime = clock.getElapsedTime();
 		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
-		
-		Vector2i pos = Mouse::getPosition(window);
-		int x = pos.x / w;
-		int y = pos.y / w;
-		bool mbleft = false;
+
 
 		while (window.pollEvent(e))
 		{
@@ -204,10 +228,18 @@ int main()
 			// zaznaczanie nieodkrytych pól flagami
 				else if (e.key.code == Mouse::Right) {
 
-					if (sgrid[x][y] == 10) sgrid[x][y] = 11;
-					else if (sgrid[x][y] == 11) sgrid[x][y] = 10;
-					
-					bombsMarked++;
+					if (sgrid[x][y] == 10) {
+
+						sgrid[x][y] = 11;
+						bombsMarked++;
+					}
+
+					else if (sgrid[x][y] == 11) {
+						sgrid[x][y] = 10;
+						bombsMarked--;
+
+					}
+
 					bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
 				}
 		}
@@ -218,17 +250,15 @@ int main()
 
 		for (int i = 1; i <= 10; i++) {
 
-
 			for (int j = 1; j <= 10; j++) {
 
 				if (sgrid[i][j] != 0) miny++;
 
-
 			}
-
-
 		}
-		if (miny == iloscmin) window.clear(Color::Black);
+
+
+
 		window.clear(Color::White);  // ustawia nowe okno o kolorze białym
 		for (int i = 1; i <= 10; i++) {
 
@@ -265,7 +295,7 @@ int main()
 				// Losuje nowe położenie bomb
 				for (int i = 1; i <= 10; i++) {
 					for (int j = 1; j <= 10; j++) {
-						if (rand() % 50 == 0) {
+						if (rand() % 7 == 0) {
 							grid[i][j] = 9; // tu można wybrać jak dużo chce się mieć bomb
 							iloscmin++;
 						}
@@ -297,10 +327,10 @@ int main()
 					for (int j = 1; j <= 10; j++)
 					{
 						if (grid[i][j] == 9) iloscmin++;
-						
+
 					}
 				}
-				
+
 				// Aktualizuje tekst z ilością bomb
 				bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 				bombsMarked = 0;
@@ -313,22 +343,26 @@ int main()
 
 			}
 		}
-		
-		if (sgrid[x][y] == 9)
+
+
+
+		if (mbleft && sgrid[x][y] == 9)
 		{
+			Przegrana = true;
 			window.draw(przegrana);
 			window.display();
-			sleep(sf::seconds(3));
+			sleep(seconds(3));
 		}
-		if (odkryte_pola == 100 - iloscmin) {
-			
+		if (!Przegrana && czyWygrana()) {
+
 			window.draw(wygrana);
 			window.display();
-			sleep(sf::seconds(3));
+			sleep(seconds(3));
+			window.close();
 
 		}
-		
-		
+		bombText.setString("Ilosc bomb: " + to_string(iloscmin));
+
 		window.draw(timerText);
 		window.draw(bombyOznaczone);
 		window.draw(bombText);
