@@ -25,7 +25,7 @@ bool czyWygrana()
 	return true;
 }
 
-void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia³a
+/*void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia³a
 
 {
 	// Sprawdzam, czy pole jest ju¿ odkryte lub czy jest bomb¹
@@ -43,11 +43,13 @@ void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie dzia³a
 		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
 	}
 }
-
+*/
 
 int main()
 {
 	restart:
+
+	int startczas = 0;
 
 	bool Przegrana = false; // ustawiamy na false na pocz¹tku gry
 
@@ -59,6 +61,8 @@ int main()
 
 	int w = 32; // pole do popisu
 	int iloscmin = 0;
+
+	int odkryte_pola = 0;
 
 	///import tekstur///
 
@@ -122,8 +126,6 @@ int main()
 	przegrana.setCharacterSize(40);
 	przegrana.setFillColor(Color::Red);
 	przegrana.setPosition(110, 400);
-	//Napis wygranej, nie wiem dalczego nie dziala warunek jest w 304 linijce
-	int odkryte_pola = 0;
 
 	Text wygrana;
 	wygrana.setFont(open_sans);
@@ -138,6 +140,7 @@ int main()
 	bombText.setFillColor(Color::Black);
 	bombText.setString("Ilosc bomb: " + to_string(iloscmin));
 	bombText.setPosition(10, 10);
+
 	//Bomby oznaczone
 	int bombsMarked = 0; // iloœæ oznaczonych bomb
 	Text bombyOznaczone;
@@ -145,6 +148,7 @@ int main()
 	bombyOznaczone.setCharacterSize(14);
 	bombyOznaczone.setFillColor(Color::Black);
 	bombyOznaczone.setPosition(275, 10);
+
 	//Timer
 	Clock clock;
 	Time elapsedTime;
@@ -154,7 +158,6 @@ int main()
 	timerText.setCharacterSize(14);
 	timerText.setFillColor(Color::Black);
 	timerText.setPosition(150, 10);
-
 
 
 
@@ -205,7 +208,25 @@ int main()
 
 		bool mbleft = false;
 
-		elapsedTime = clock.getElapsedTime();
+
+		for (int i = 1; i <= 10; i++) {
+
+			for (int j = 1; j <= 10; j++) {
+
+				if (sgrid[i][j] != 10) startczas++;
+
+			}
+		}
+
+		if (startczas == 1) {
+
+			clock.restart();
+			elapsedTime = clock.getElapsedTime();
+
+
+		}
+
+
 		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
 
 		bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
@@ -223,10 +244,28 @@ int main()
 			if (e.type == Event::MouseButtonPressed) {
 				if (e.key.code == Mouse::Left)
 				{
+
+
+					if (sgrid[x][y] == 11) {
+
+						sgrid[x][y] = grid[x][y];
+						bombsMarked--;
+
+					}
+
 					sgrid[x][y] = grid[x][y];
+						
+
 					mbleft = true;
 					klik.play();
 
+					// Sprawdzam, czy kursor myszy znajduje siê nad obszarem przycisku
+					if (resetButton.getGlobalBounds().contains(pos.x, pos.y))
+					{
+
+						goto restart;
+
+					}
 				}
 
 
@@ -265,7 +304,6 @@ int main()
 		}
 
 
-
 		window.clear(Color::White);  // ustawia nowe okno o kolorze bia³ym
 
 
@@ -283,24 +321,15 @@ int main()
 				s.setTextureRect(IntRect(sgrid[i][j] * w, 0, w, w));
 				s.setPosition(i * w, j * w);
 				window.draw(s);
+				
 
 			}
 
 		}
 
-
-		if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
-		{
-			// Pobieram pozycjê kursora myszy na ekranie
-			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-			// Sprawdzam, czy kursor myszy znajduje siê nad obszarem przycisku
-			if (resetButton.getGlobalBounds().contains(mousePos.x, mousePos.y))
-			{
-
-				goto restart;
-
-			}
-		}
+		window.draw(timerText);
+		window.draw(bombyOznaczone);
+		window.draw(bombText);
 
 		if (mbleft && sgrid[x][y] == 9)
 		{
@@ -314,16 +343,13 @@ int main()
 			window.draw(wygrana);
 			window.display();
 			wygranadzwiek.play();
-			sleep(seconds(3));
-			window.close();
+			sleep(seconds(6));
+			goto restart;
+
 
 		}
 
-		bombText.setString("Ilosc bomb: " + to_string(iloscmin));
-
-		window.draw(timerText);
-		window.draw(bombyOznaczone);
-		window.draw(bombText);
+		
 		window.draw(resetButton);
 		window.draw(reset);
 		window.display();
