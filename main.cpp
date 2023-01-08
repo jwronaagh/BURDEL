@@ -166,8 +166,7 @@ int main()
 	Time elapsedTime;
 	Text timerText;
 	Font font;
-	font.loadFromFile("czcionki/opensus.ttf");
-	timerText.setFont(font);
+	timerText.setFont(open_sans);
 	timerText.setCharacterSize(14);
 	timerText.setFillColor(Color::Black);
 	timerText.setPosition(150, 10);
@@ -175,20 +174,16 @@ int main()
 
 	while (window.isOpen())
 	{
-		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed)
-				window.close();
-		}
+		Event e;
+		
 		elapsedTime = clock.getElapsedTime();
 		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
+		
 		Vector2i pos = Mouse::getPosition(window);
 		int x = pos.x / w;
 		int y = pos.y / w;
 		bool mbleft = false;
 
-		Event e;
 		while (window.pollEvent(e))
 		{
 			if (e.type == Event::Closed)
