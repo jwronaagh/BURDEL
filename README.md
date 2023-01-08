@@ -1,3 +1,2 @@
 # BURDEL
-koło 14:00 będę jeszcze dorabiać  jakieś dzikie teksty pod siatką, może fabułę zrobie z wyskakującym okienkiem
-w mainie masz
+W mainie masz kod z timerem ale laguj, w źródło.cpp wszystko działa,ale nie ma timera
