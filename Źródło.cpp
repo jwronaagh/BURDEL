@@ -25,23 +25,30 @@ bool czyWygrana()
 	return true;
 }
 
-void odkryjPuste(int grid[x][y], int sgrid[x][y]) // NIE mam pojecia czemu nie dzia³a
 
-{
-	// Sprawdzam, czy pole jest ju¿ odkryte lub czy jest bomb¹
-	if (sgrid[x][y] == 9 || sgrid[x][y] == 0) return;
+void odkryjPlansze(int x, int y) {
 
-	// Odkrywamy pole
-	sgrid[x][y] = grid[x][y];
 
-	// Jeœli pole jest puste, to odkrywam równie¿ s¹siednie pola
-	if (grid[x][y] == 0)
-	{
-		if (x > 1) odkryjPuste(x - 1, y); // pole po lewej
-		if (x < 12) odkryjPuste(x + 1, y); // pole po prawej
-		if (y > 1) odkryjPuste(x, y - 1); // pole u góry
-		if (y < 12) odkryjPuste(x, y + 1); // pole na dole
-	}
+
+	if (x < 0 || x > 11) return;
+	if (y < 0 || y >11) return;
+	if(grid[x][y] != 9 && sgrid[x][y] != grid[x][y])  sgrid[x][y] = grid[x][y];
+
+
+
+	if (sgrid[x][y] != 0) return;
+
+
+	odkryjPlansze(x - 1, y - 1);
+	odkryjPlansze(x - 1, y);
+	odkryjPlansze(x - 1, y + 1);
+	odkryjPlansze(x + 1, y - 1);
+	odkryjPlansze(x + 1, y);
+	odkryjPlansze(x + 1, y + 1);
+	odkryjPlansze(x, y - 1);
+	odkryjPlansze(x, y);
+	odkryjPlansze(x, y + 1);
+
 }
 
 
@@ -256,7 +263,7 @@ int main()
 
 					sgrid[x][y] = grid[x][y];
 
-					odkryjPuste(grid[x][y], sgrid[x][y]);
+					odkryjPlansze(x, y);
 
 					mbleft = true;
 					klik.play();
