@@ -5,7 +5,6 @@
 #include <iostream>
 
 /* Co dodać?
-* licznik czasu pokonało mnie ale w niedzile spróbije znowu za dużo errorów
 * menu też mnie pokonało same problemy z tym :/
 *
 */
@@ -18,6 +17,18 @@ using namespace sf; // przedrostek na początky by nie dodawać go do każdej fu
 int grid[12][12]; // 12 wierszy 12 kolumn siatka odkryta // dałem poza maina żeby działało w funkcjach
 int sgrid[12][12]; // 12 wierszy 12 kolumn siatka zakryta
 
+bool czyWygrana()
+{
+	for (int i = 1; i <= 10; i++)
+	{
+		for (int j = 1; j <= 10; j++)
+		{
+			// Jeśli pole jest zakryte i nie jest bombą, to znaczy, że gracz jeszcze nie wygrał
+			if (sgrid[i][j] == 10 && grid[i][j] != 9) return false;
+		}
+	}
+	return true;
+}
 void odkryjPuste(int x, int y) // NIE mam pojecia czemu nie działa
 
 {
@@ -161,17 +172,30 @@ int main()
 	bombyOznaczone.setFont(open_sans);
 	bombyOznaczone.setCharacterSize(14);
 	bombyOznaczone.setFillColor(Color::Black);	
-	bombyOznaczone.setPosition(215, 10);
+	bombyOznaczone.setPosition(275, 10);
+	
+	Clock clock;
+	Time elapsedTime;
+	Text timerText;
+	Font font;
+	timerText.setFont(open_sans);
+	timerText.setCharacterSize(14);
+	timerText.setFillColor(Color::Black);
+	timerText.setPosition(150, 10);
 	
 
 	while (window.isOpen())
 	{
+		Event e;
+		
+		elapsedTime = clock.getElapsedTime();
+		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
+		
 		Vector2i pos = Mouse::getPosition(window);
 		int x = pos.x / w;
 		int y = pos.y / w;
 		bool mbleft = false;
 
-		Event e;
 		while (window.pollEvent(e))
 		{
 			if (e.type == Event::Closed)
@@ -196,7 +220,7 @@ int main()
 					else if (sgrid[x][y] == 11) sgrid[x][y] = 10;
 					
 					bombsMarked++;
-					bombyOznaczone.setString("Ilosc oznaczone miny: " + to_string(bombsMarked));
+					bombyOznaczone.setString("Oznaczone pola: " + to_string(bombsMarked));
 				}
 		}
 
@@ -294,19 +318,21 @@ int main()
 				bombsMarked = 0;
 				bombyOznaczone.setString("Oznaczone miny: " + to_string(bombsMarked));
 
+				clock.restart();
+
 				mbleft = false;
 				muzyczka.play();
 
 			}
 		}
 		
-		if (sgrid[x][y] == 9)
+		if (mbleft && sgrid[x][y] == 9)
 		{
 			window.draw(przegrana);
 			window.display();
 			sleep(sf::seconds(3));
 		}
-		if (odkryte_pola == 100 - iloscmin) {
+		if (czyWygrana()) {
 			
 			window.draw(wygrana);
 			window.display();
@@ -314,6 +340,8 @@ int main()
 
 		}
 		
+		
+		window.draw(timerText);
 		window.draw(bombyOznaczone);
 		window.draw(bombText);
 		window.draw(resetButton);
