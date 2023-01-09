@@ -26,7 +26,7 @@ bool czyWygrana()
 }
 
 
-void odkryjPlansze(int x, int y) {
+/*void odkryjPlansze(int x, int y) {
 
 
 
@@ -51,7 +51,7 @@ void odkryjPlansze(int x, int y) {
 
 }
 
-
+*/
 int main()
 {
 	restart:
@@ -119,6 +119,17 @@ int main()
 	resetButton.setOutlineThickness(5);
 	resetButton.setOutlineColor(Color(163, 26, 16));
 	resetButton.setPosition(150, 400); // Ustawiam pozycjê przycisku na ekranie
+
+
+	//Przycisk po przegranej wygranej
+	RectangleShape Button(Vector2f(310, 80));
+	Button.setFillColor(Color(31, 36, 27));
+	Button.setOutlineThickness(5);
+	Button.setOutlineColor(Color(163, 26, 16));
+	Button.setPosition(50, 390); // Ustawiam pozycjê przycisku na ekranie
+
+
+
 	//Napis Resetu
 	Text reset;
 	reset.setFont(open_sans);
@@ -144,17 +155,17 @@ int main()
 	Text bombText;
 	bombText.setFont(open_sans);
 	bombText.setCharacterSize(14);
-	bombText.setFillColor(Color::Black);
+	bombText.setFillColor(Color::Red);
 	bombText.setString("Ilosc bomb: " + to_string(iloscmin));
-	bombText.setPosition(10, 10);
+	bombText.setPosition(10, 5);
 
 	//Bomby oznaczone
 	int bombsMarked = 0; // iloœæ oznaczonych bomb
 	Text bombyOznaczone;
 	bombyOznaczone.setFont(open_sans);
 	bombyOznaczone.setCharacterSize(14);
-	bombyOznaczone.setFillColor(Color::Black);
-	bombyOznaczone.setPosition(275, 10);
+	bombyOznaczone.setFillColor(Color::Red);
+	bombyOznaczone.setPosition(275, 5);
 
 	//Timer
 	Clock clock;
@@ -163,8 +174,17 @@ int main()
 	Font font;
 	timerText.setFont(open_sans);
 	timerText.setCharacterSize(14);
-	timerText.setFillColor(Color::Black);
-	timerText.setPosition(150, 10);
+	timerText.setFillColor(Color::Red);
+	timerText.setPosition(150, 5);
+
+
+	//tlo
+
+	Texture texture;
+	texture.loadFromFile("images/tlo.png");
+
+	Sprite sprite;
+	sprite.setTexture(texture);
 
 
 
@@ -203,9 +223,10 @@ int main()
 
 
 
-
 	while (window.isOpen())
 	{
+		window.draw(sprite);
+
 		Event e;
 
 		Vector2i pos = Mouse::getPosition(window);
@@ -216,7 +237,7 @@ int main()
 
 		bool mbleft = false;
 
-
+		/*
 		for (int i = 1; i <= 10; i++) {
 
 			for (int j = 1; j <= 10; j++) {
@@ -228,11 +249,13 @@ int main()
 
 		if (startczas == 1) {
 
-			clock.restart();
-			elapsedTime = clock.getElapsedTime();
-
 
 		}
+
+		clock.restart(); */
+
+
+		elapsedTime = clock.getElapsedTime();
 
 
 		timerText.setString("Czas: " + to_string(elapsedTime.asSeconds()));
@@ -263,7 +286,7 @@ int main()
 
 					sgrid[x][y] = grid[x][y];
 
-					odkryjPlansze(x, y);
+					//odkryjPlansze(x, y);
 
 					mbleft = true;
 					klik.play();
@@ -313,7 +336,7 @@ int main()
 		}
 
 
-		window.clear(Color::White);  // ustawia nowe okno o kolorze bia³ym
+		//window.clear(Color::White);  // ustawia nowe okno o kolorze bia³ym
 
 
 		for (int i = 1; i <= 10; i++) {
@@ -343,22 +366,26 @@ int main()
 		if (mbleft && sgrid[x][y] == 9)
 		{
 			Przegrana = true;
+			window.draw(Button);
 			window.draw(przegrana);
 			window.display();
 			sleep(seconds(3));
 		}
 		if (!Przegrana && czyWygrana()) {
 
+			window.draw(Button);
 			window.draw(wygrana);
-			window.display();
 			wygranadzwiek.play();
+			window.display();
+			
 			sleep(seconds(6));
 			goto restart;
 
 
 		}
 
-		
+
+
 		window.draw(resetButton);
 		window.draw(reset);
 		window.display();
